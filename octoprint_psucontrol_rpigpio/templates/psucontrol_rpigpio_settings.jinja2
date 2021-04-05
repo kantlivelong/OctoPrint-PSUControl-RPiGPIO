@@ -1,0 +1,37 @@
+<form class="form-horizontal">
+    <h4>General</h4>
+    <div class="control-group">
+        <label class="control-label">GPIO Mode</label>
+        <div class="controls">
+            <select data-bind="value: settings.plugins.psucontrol_rpigpio.GPIOMode">
+                <option value="BOARD">BOARD</option>
+                <option value="BCM">BCM</option>
+            </select>
+            <br/><span class="help-inline">Pin number will be converted if an alternate mode has already been set by another plugin.</span>
+        </div>
+    </div>
+    <br />
+
+    <h4>Switching</h4>
+    <div class="control-group">
+        <label class="control-label">Pin<br/><span class="help-inline">Zero to disable</span></label>
+        <div class="controls">
+            <input type="number" min="0" class="input-mini" data-bind="value: settings.plugins.psucontrol_rpigpio.onoffGPIOPin"> <input type="checkbox" data-bind="checked: settings.plugins.psucontrol_rpigpio.invertonoffGPIOPin"> Invert
+        </div>
+    </div>
+    <br />
+
+    <h4>Sensing</h4>
+    <div class="control-group">
+        <label class="control-label">Pin<br/><span class="help-inline">Zero to disable</span></label>
+        <div class="controls">
+            <input type="number" min="0" class="input-mini" data-bind="value: settings.plugins.psucontrol_rpigpio.senseGPIOPin">
+            <select data-bind="value: settings.plugins.psucontrol_rpigpio.senseGPIOPinPUD" class="input-medium">
+                <option value="">Float</option>
+                <option value="PULL_UP">Pull-Up</option>
+                <option value="PULL_DOWN">Pull-Down</option>
+            </select>
+            <input type="checkbox" data-bind="checked: settings.plugins.psucontrol_rpigpio.invertsenseGPIOPin"> Invert
+        </div>
+    </div>
+</form>
