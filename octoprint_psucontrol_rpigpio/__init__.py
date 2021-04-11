@@ -104,7 +104,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             return 0
 
 
-    def setup(self):
+    def setup(self, *args, **kwargs):
         GPIO.setwarnings(False)
 
         if GPIO.getmode() is None:
@@ -145,7 +145,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                 self._logger.error(e)
 
 
-    def cleanup(self):
+    def cleanup(self, *args, **kwargs):
         GPIO.setwarnings(False)
 
         for pin in self._configuredGPIOPins:
