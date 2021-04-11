@@ -229,7 +229,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def get_update_information(self):
         return dict(
-            psucontrol=dict(
+            psucontrol_rpigpio=dict(
                 displayName="PSU Control - RPi.GPIO",
                 displayVersion=self._plugin_version,
 
@@ -250,3 +250,8 @@ __plugin_pythoncompat__ = ">=2.7,<4"
 def __plugin_load__():
     global __plugin_implementation__
     __plugin_implementation__ = PSUControl_RPiGPIO()
+
+    global __plugin_hooks__
+    __plugin_hooks__ = {
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
+    }
