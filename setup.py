@@ -6,7 +6,7 @@ import setuptools
 plugin_identifier = "psucontrol_rpigpio"
 plugin_package = "octoprint_%s" % plugin_identifier
 plugin_name = "OctoPrint-PSUControl-RPiGPIO"
-plugin_version = "0.0.1"
+plugin_version = "1.0.0"
 plugin_description = "Adds legacy RPi.GPIO to OctoPrint-PSUControl as a sub-plugin"
 plugin_author = "Shawn Bruce"
 plugin_author_email = "kantlivelong@gmail.com"
