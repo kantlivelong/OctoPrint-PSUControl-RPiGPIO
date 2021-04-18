@@ -12,6 +12,13 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                          octoprint.plugin.SettingsPlugin):
 
     def __init__(self):
+        try:
+            global GPIO
+            import RPi.GPIO as GPIO
+            self._hasGPIO = True
+        except (ImportError, RuntimeError):
+            self._hasGPIO = False
+
         self._pin_to_gpio_rev1 = [-1, -1, -1, 0, -1, 1, -1, 4, 14, -1, 15, 17, 18, 21, -1, 22, 23, -1, 24, 10, -1, 9, 25, 11, 8, -1, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ]
         self._pin_to_gpio_rev2 = [-1, -1, -1, 2, -1, 3, -1, 4, 14, -1, 15, 17, 18, 27, -1, 22, 23, -1, 24, 10, -1, 9, 25, 11, 8, -1, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ]
         self._pin_to_gpio_rev3 = [-1, -1, -1, 2, -1, 3, -1, 4, 14, -1, 15, 17, 18, 27, -1, 22, 23, -1, 24, 10, -1, 9, 25, 11, 8, -1, 7, -1, -1, 5, -1, 6, 12, 13, -1, 19, 16, 26, 20, -1, 21 ]
@@ -34,6 +41,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def on_settings_initialized(self):
         self.reload_settings()
+        self.configure_gpio()
 
 
     def reload_settings(self):
@@ -50,18 +58,6 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
 
     def on_startup(self, host, port):
-        try:
-            global GPIO
-            import RPi.GPIO as GPIO
-
-            self._logger.info("Running RPi.GPIO version {}".format(GPIO.VERSION))
-            if GPIO.VERSION < "0.6":
-                self._logger.error("RPi.GPIO version 0.6.0 or greater required.")
-                return
-        except NameError:
-            self._logger.error("RPi.GPIO not detected. Plugin will not be registered with PSUControl.")
-            return
-
         psucontrol_helpers = self._plugin_manager.get_helpers("psucontrol")
         if 'register_plugin' not in psucontrol_helpers.keys():
             self._logger.warning("The version of PSUControl that is installed does not support plugin registration.")
@@ -104,7 +100,16 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             return 0
 
 
-    def setup(self, *args, **kwargs):
+    def configure_gpio(self):
+        if not self._hasGPIO:
+            self._logger.error("RPi.GPIO is required.")
+            return
+
+        self._logger.info("Running RPi.GPIO version {}".format(GPIO.VERSION))
+        if GPIO.VERSION < "0.6":
+            self._logger.error("RPi.GPIO version 0.6.0 or greater required.")
+            return
+
         GPIO.setwarnings(False)
 
         if GPIO.getmode() is None:
@@ -145,7 +150,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                 self._logger.error(e)
 
 
-    def cleanup(self, *args, **kwargs):
+    def cleanup_gpio(self):
         GPIO.setwarnings(False)
 
         for pin in self._configuredGPIOPins:
@@ -159,6 +164,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def turn_psu_on(self):
         if self.config['onoffGPIOPin'] <= 0:
+            self._logger.warning("Switching is not enabled")
             return
 
         self._logger.debug("Switching PSU On Using GPIO: {}".format(self.config['onoffGPIOPin']))
@@ -175,6 +181,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def turn_psu_off(self):
         if self.config['onoffGPIOPin'] <= 0:
+            self._logger.warning("Switching is not enabled")
             return
 
         self._logger.debug("Switching PSU Off Using GPIO: {}".format(self.config['onoffGPIOPin']))
@@ -191,6 +198,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def get_psu_state(self):
         if self.config['senseGPIOPin'] <= 0:
+            self._logger.warning("Sensing is not enabled")
             return 0
 
         r = 0
@@ -211,6 +219,9 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
     def on_settings_save(self, data):
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self.reload_settings()
+
+        self.cleanup_gpio()
+        self.configure_gpio()
 
 
     def get_settings_version(self):
@@ -243,6 +254,15 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                 pip="https://github.com/kantlivelong/OctoPrint-PSUControl-RPiGPIO/archive/{target_version}.zip"
             )
         )
+
+
+    # < Holdovers from initial release. Will be removed later.
+    def setup(self, *args, **kwargs):
+        pass
+
+    def cleanup(self, *args, **kwargs):
+        pass
+    # >
 
 __plugin_name__ = "PSU Control - RPi.GPIO"
 __plugin_pythoncompat__ = ">=2.7,<4"
