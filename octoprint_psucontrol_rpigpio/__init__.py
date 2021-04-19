@@ -123,7 +123,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                 return
 
         if self.config['senseGPIOPin'] > 0:
-            self._logger.info("Configuring GPIO for pin {}".format(self.config['senseGPIOPin']))
+            self._logger.info("Configuring sensing GPIO for pin {}".format(self.config['senseGPIOPin']))
 
             if self.config['senseGPIOPinPUD'] == 'PULL_UP':
                 pull_up_down = GPIO.PUD_UP
@@ -139,7 +139,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
                 self._logger.error(e)
 
         if self.config['onoffGPIOPin'] > 0:
-            self._logger.info("Configuring GPIO for pin {}".format(self.config['onoffGPIOPin']))
+            self._logger.info("Configuring switching GPIO for pin {}".format(self.config['onoffGPIOPin']))
             try:
                 if not self.config['invertonoffGPIOPin']:
                     initial_pin_output=GPIO.LOW
