@@ -104,7 +104,7 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
     def configure_gpio(self):
         if not self._hasGPIO:
-            self._logger.error("RPi.GPIO is required.")
+            self._logger.error("Error importing RPi.GPIO.")
             return
 
         self._logger.info("Running RPi.GPIO version {}".format(GPIO.VERSION))
