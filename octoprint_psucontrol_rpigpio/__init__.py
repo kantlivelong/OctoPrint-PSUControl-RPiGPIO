@@ -122,19 +122,6 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             else:
                 return
 
-        if self.config['onoffGPIOPin'] > 0:
-            self._logger.info("Configuring GPIO for pin {}".format(self.config['onoffGPIOPin']))
-            try:
-                if not self.config['invertonoffGPIOPin']:
-                    initial_pin_output=GPIO.LOW
-                else:
-                    initial_pin_output=GPIO.HIGH
-
-                GPIO.setup(self._gpio_get_pin(self.config['onoffGPIOPin']), GPIO.OUT, initial=initial_pin_output)
-                self._configuredGPIOPins.append(self.config['onoffGPIOPin'])
-            except (RuntimeError, ValueError) as e:
-                self._logger.error(e)
-
         if self.config['senseGPIOPin'] > 0:
             self._logger.info("Configuring GPIO for pin {}".format(self.config['senseGPIOPin']))
 
@@ -148,6 +135,19 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             try:
                 GPIO.setup(self._gpio_get_pin(self.config['senseGPIOPin']), GPIO.IN, pull_up_down=pull_up_down)
                 self._configuredGPIOPins.append(self.config['senseGPIOPin'])
+            except (RuntimeError, ValueError) as e:
+                self._logger.error(e)
+
+        if self.config['onoffGPIOPin'] > 0:
+            self._logger.info("Configuring GPIO for pin {}".format(self.config['onoffGPIOPin']))
+            try:
+                if not self.config['invertonoffGPIOPin']:
+                    initial_pin_output=GPIO.LOW
+                else:
+                    initial_pin_output=GPIO.HIGH
+
+                GPIO.setup(self._gpio_get_pin(self.config['onoffGPIOPin']), GPIO.OUT, initial=initial_pin_output)
+                self._configuredGPIOPins.append(self.config['onoffGPIOPin'])
             except (RuntimeError, ValueError) as e:
                 self._logger.error(e)
 
