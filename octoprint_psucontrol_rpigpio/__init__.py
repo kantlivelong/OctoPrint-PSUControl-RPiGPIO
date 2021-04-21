@@ -136,8 +136,10 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             try:
                 GPIO.setup(self._gpio_get_pin(self.config['senseGPIOPin']), GPIO.IN, pull_up_down=pull_up_down)
                 self._configuredGPIOPins.append(self.config['senseGPIOPin'])
-            except (RuntimeError, ValueError) as e:
-                self._logger.error(e)
+            except Exception:
+                self._logger.exception(
+                    "Exception while setting up GPIO pin {}".format(self.config['senseGPIOPin'])
+                )
 
         if self.config['onoffGPIOPin'] > 0:
             self._logger.info("Configuring switching GPIO for pin {}".format(self.config['onoffGPIOPin']))
@@ -149,8 +151,10 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
                 GPIO.setup(self._gpio_get_pin(self.config['onoffGPIOPin']), GPIO.OUT, initial=initial_pin_output)
                 self._configuredGPIOPins.append(self.config['onoffGPIOPin'])
-            except (RuntimeError, ValueError) as e:
-                self._logger.error(e)
+            except Exception:
+                self._logger.exception(
+                    "Exception while setting up GPIO pin {}".format(self.config['onoffGPIOPin'])
+                )
 
 
     def cleanup_gpio(self):
@@ -160,8 +164,10 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
             self._logger.debug("Cleaning up pin {}".format(pin))
             try:
                 GPIO.cleanup(self._gpio_get_pin(pin))
-            except (RuntimeError, ValueError) as e:
-                self._logger.error(e)
+            except Exception:
+                self._logger.exception(
+                    "Exception while cleaning up GPIO pin {}".format(pin)
+                )
         self._configuredGPIOPins = []
 
 
@@ -178,8 +184,8 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
         try:
             GPIO.output(self._gpio_get_pin(self.config['onoffGPIOPin']), o)
-        except (RuntimeError, ValueError) as e:
-            self._logger.error(e)
+        except Exception:
+            self._logger.exception("Exception while writing GPIO line")
 
 
     def turn_psu_off(self):
@@ -195,8 +201,8 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
 
         try:
             GPIO.output(self._gpio_get_pin(self.config['onoffGPIOPin']), o)
-        except (RuntimeError, ValueError) as e:
-            self._logger.error(e)
+        except Exception:
+            self._logger.exception("Exception while writing GPIO line")
 
 
     def get_psu_state(self):
@@ -207,8 +213,8 @@ class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
         r = 0
         try:
             r = GPIO.input(self._gpio_get_pin(self.config['senseGPIOPin']))
-        except (RuntimeError, ValueError) as e:
-            self._logger.error(e)
+        except Exception:
+            self._logger.exception("Exception while reading GPIO line")
             return False
         self._logger.debug("Result: {}".format(r))
         r = bool(r)
