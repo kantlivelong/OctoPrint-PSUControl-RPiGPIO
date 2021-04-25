@@ -8,6 +8,7 @@ __copyright__ = "Copyright (C) 2021 Shawn Bruce - Released under terms of the AG
 import octoprint.plugin
 
 class PSUControl_RPiGPIO(octoprint.plugin.StartupPlugin,
+                         octoprint.plugin.RestartNeedingPlugin,
                          octoprint.plugin.TemplatePlugin,
                          octoprint.plugin.SettingsPlugin):
 
