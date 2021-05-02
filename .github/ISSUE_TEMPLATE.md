@@ -93,9 +93,3 @@ https://pastebin.com
 
 ALWAYS INCLUDE and never truncate.
 -->
-
-#### Wiring diagram
-
-<!--
-If applicable.
--->
